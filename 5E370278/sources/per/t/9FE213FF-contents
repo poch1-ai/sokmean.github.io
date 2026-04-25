@@ -1,0 +1,17 @@
+---
+title: "Sokmean website 3"
+---
+
+This is a Quarto website.
+
+To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+
+```{r}
+1 + 1
+```
+
+```{r}
+usethis::use_git_remote("origin", url = NULL, overwrite =
+  TRUE)
+```
+

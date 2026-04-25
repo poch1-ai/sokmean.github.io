@@ -1,0 +1,48 @@
+---
+title: "MiniProject2Lea&Sokmean"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(stringr)
+library(httr2)
+library(httr)
+library(tidycensus)
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+#| eval: FALSE
+
+usethis::edit_r_environ("project")  # opens an .Renviron window
+
+# Add a line like: OMDB_KEY='myspecialkey'
+# Save the .Renviron file
+# Close down RStudio
+# Restart RStudio
+
+Sys.getenv()   # to see if your new key is listed
+
+omdb_api_key <- Sys.getenv("OMDB_KEY")
+print(omdb_api_key)  # see if it works
+```
+
+.
+
+```{r}
+
+```

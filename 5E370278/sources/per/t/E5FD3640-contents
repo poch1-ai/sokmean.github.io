@@ -1,0 +1,401 @@
+---
+title: "Table Scraping in R"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+  
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2026/blob/main/09_table_scraping.qmd).  Just hit the Download Raw File button.
+
+
+```{r}
+#| include: FALSE
+
+library(tidyverse) 
+library(rvest) # helps R read HTML 
+library(polite) # 
+```
+
+```{r}
+screen
+```
+
+
+# Using rvest for web scraping
+
+If you would like to assemble data from a website with no dedicated user interface (like an API which we'll see later), you can often acquire it using brute force methods commonly called web scraping.  Typically, this involves finding content inside HTML (Hypertext markup language) code used for creating webpages and web applications and the CSS (Cascading style sheets) language for customizing the appearance of webpages. 
+We are used to reading data from .csv files.... but most websites have it stored in XML (like html, but for data). You can read more about it here if you're interested: https://www.w3schools.com/xml/default.asp
+
+XML has a sort of tree or graph-like structure... so we can identify information by which `node` it belongs to (`html_nodes`) and then convert the content into something we can use in R (`html_text` or `html_table`).
+
+
+Here's one quick example of web scraping.  First check out the webpage https://www.cheese.com/by_type and then select Semi-Soft.  We can drill into the html code for this webpage and find and store specific information (like cheese names)
+
+```{r}
+session <- bow("https://www.cheese.com/by_type", force = TRUE)
+result <- scrape(session, query = list(t = "semi-soft", per_page = 100)) |> 
+  html_node("#main-body") |>  # find the certain section of the page, identify the main body and the 3rd header 
+  html_nodes("h3") |> 
+  html_text(). # html for plain text 
+head(result)
+#[1] "American Cheese"     "Mozzarella"          "Taleggio"           
+#[4] "Fontina Val d'Aosta" "Blue Cheese"         "Jarlsberg"   
+```
+
+
+
+## Four steps to scraping data with functions in the `rvest` library:
+
+0. `robotstxt::paths_allowed()` Check if the website allows scraping, and then make sure we scrape "politely"
+1. `read_html()`.  Input the URL containing the data and turn the html code into an XML file (another markup format that's easier to work with).
+2. `html_nodes()`.  Extract specific nodes from the XML file by using the CSS path that leads to the content of interest. (use css="table" for tables.)
+3. `html_text()`.  Extract content of interest from nodes.  Might also use `html_table()` etc.
+
+
+## Data scraping ethics
+
+Before scraping, we should always check first whether the website allows scraping.  We should also consider if there's any personal or confidential information, and we should be considerate to not overload the server we're scraping from.
+
+[Chapter 24 in R4DS](https://r4ds.hadley.nz/webscraping#scraping-ethics-and-legalities) provides a nice overview of some of the important issues to consider.  A couple of highlights:
+
+- be aware of terms of service, and, if available, the `robots.txt` file that some websites will publish to clarify what can and cannot be scraped and other constraints about scraping.
+- use the [`polite` package](https://github.com/dmi3kno/polite) to scrape public, non-personal, and factual data in a respectful manner
+- scrape with a good purpose and request only what you need; in particular, be extremely wary of personally identifiable information
+
+See [this article](https://towardsdatascience.com/ethics-in-web-scraping-b96b18136f01) for more perspective on the ethics of data scraping.
+
+
+## When the data is already in table form:
+
+In this example, we will scrape climate data from [this website](https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503)
+
+The website already contains data in table form, so we use `html_nodes(. , css = "table")` and `html_table()`
+
+```{r}
+# check that scraping is allowed (Step 0)
+robotstxt::paths_allowed("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503")
+
+# Step 1: read_html()
+mpls <- read_html("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503")
+
+# 2: html_nodes()
+tables <- html_nodes(mpls, css = "table") 
+tables  # have to guesstimate which table contains climate info
+
+# 3: html_table()
+html_table(tables, header = TRUE, fill = TRUE)    # find the right table
+mpls_data1 <- html_table(tables, header = TRUE, fill = TRUE)[[1]]  
+mpls_data1
+mpls_data2 <- html_table(tables, header = TRUE, fill = TRUE)[[2]]  
+mpls_data2
+```
+
+Now we wrap the 4 steps above into the `bow` and `scrape` functions from the `polite` package:
+
+```{r}
+session <- bow("https://www.usclimatedata.com/climate/minneapolis/minnesota/united-states/usmn0503", force = TRUE)
+
+result <- scrape(session) |> #scrap from that url
+  html_nodes(css = "table") |> 
+  html_table(header = TRUE, fill = TRUE) 
+mpls_data1 <- result[[1]]
+mpls_data2 <- result[[2]]
+```
+
+
+Even after finding the correct tables, there may still be a lot of work to make it tidy!!!  
+
+**[Pause to Ponder:]** What is each line of code doing below?
+
+*Sticks the two scraped tables side by side because the clamate information was split across 2 tables on the webside*
+```{r}
+bind_cols(mpls_data1, mpls_data2) |> # combind 2 data frame into 1 wide data frame 
+  as_tibble() |>  # convert result into tibble
+  select(-`...8`) |> # remove column named ...8
+  mutate(`...1` = str_extract(`...1`, "[^ ]+ [^ ]+ [^ ]+")) |> # extract the1st 3 words 
+  pivot_longer(cols = c(`JanJa`:`DecDe`), # change the data frame from wide to long
+               names_to = "month", values_to = "weather") |> # variable name is the month and the value in the weather 
+  pivot_wider(names_from = `...1`, values_from = weather) |>
+  mutate(month = str_sub(month, 1, 3))  |>
+  rename(avg_high = "Average high in",
+         avg_low = "Average low in")
+
+# Probably want to rename the rest of the variables too!
+```
+combine two scraped climate tables
+turn into tibble
+remove junk column
+clean the row-label column
+convert month columns into rows
+convert weather types into columns
+clean month names
+rename variables
+
+
+### On Your Own
+
+1. In 12_maps.qmd we will see how to create an interactive U.S. map showing population densities by state.  Right now, let's see if we can use our new web scraping skills to scrape the correct population density data and create a tidy data frame!
+
+A quick wikipedia search yields [this webpage](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density) with population densities in a nice table format.  Use our 4 steps to `rvest`ing data to acquire the data, and then create a tidy tibble with one row per state.
+
+```{r}
+# step 0: check that the website allows to scrape
+robotstxt::paths_allowed("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# Step 1: read_html()
+pop_dens <- read_html("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density")
+
+# Step 3: html_nodes()
+tables <- html_nodes(pop_dens, css = "table")
+tables # have to guesstimate which table contains our desire table 
+desiny_table <- html_table(tables, header = TRUE, fill = TRUE)[[1]]
+destiny_table 
+
+#Perform Step 0-3 using polite parkage 
+session <- bow("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(css = "table") |>
+  html_table ( header = TRUE, fill = TRUE)
+densiny_table <- result[[1]]
+densiny_table
+
+# Then you clean things up
+densiny_data <- destiny_table |>
+  session(1,2,4,5) |>
+  filter(!row_number() == 1) |>
+  rename(Land_area = `Land area`) |>
+  mutate(state_name = 
+str_to_lower(as.character(Location)),
+Density = parse_number(Density),
+population = parse_number(population),
+Land_area = parse_number(Land_area))|>
+  select(-Location)
+density_data
+
+```
+
+
+
+2. Use the `rvest` package and `html_table` to read in the table of data found at the link [here](https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population) and create a scatterplot of land area versus the 2024 estimated population.  I give you some starter code below; fill in the "???" and be sure you can explain what EVERY line of code does and why it's necessary.
+
+```{r}
+
+```
+
+
+```{r}
+#| eval: FALSE
+
+city_pop <- read_html("https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population")
+
+pop <- html_nodes(city_pop, "table")
+html_table(pop, header = TRUE, fill = TRUE)  # find right table
+pop2 <- html_table(pop, header = TRUE, fill = TRUE)[[3]]
+pop2
+
+# perform the steps above with the polite package
+session <- bow("https://en.wikipedia.org/wiki/List_of_United_States_cities_by_population", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes("table") |>
+  html_table(header = TRUE, fill = TRUE)
+pop2 <- result[[3]]
+pop2
+
+pop3 <- as_tibble(pop2[,c(1:6,8)]) |>
+  slice(-1) |>
+  rename(`City` = `Municipality`,
+         `State` = `ST`,
+         `Estimate2024` = `2024estimate`,
+         `Census` = `2020census`,
+         `Area` = `2020 land area`,
+         `Density` = `2020 density`) |>
+  mutate(Estimate2024 = parse_number(Estimate2024),
+         Census = parse_number(Census),
+         Change =  str_extract(Change, (".\\d..[^//%]"),  # get rid of % but preserve +/-,
+         Area = parse_number(Area),
+         Density = parse_number(Density)) |> 
+  mutate(City = str_replace(City, "\\[.]*$", ""))
+pop3
+
+# pick out unusual points
+outliers <- pop3 |> 
+  filter(Estimate2024 > 300000 | Area > 500)
+
+# This will work if don't turn variables from chr to dbl, but in that 
+#  case notice how axes are just evenly spaced categorical variables
+ggplot(pop3, aes(x = Area, y = 500)) +
+  geom_point()  +
+  geom_smooth() +
+  ggrepel::geom_label_repel(data = outliers, aes(label = City))
+```
+
+
+3. We would like to create a tibble with 4 years of data (2001-2004) from the Minnesota Wild hockey team.  Specifically, we are interested in the "Scoring Regular Season" table from [this webpage](https://www.hockey-reference.com/teams/MIN/2001.html) and the similar webpages from 2002, 2003, and 2004.  Your final tibble should have 6 columns:  player, year, age, pos (position), gp (games played), and pts (points).
+
+You should (a) write a function called `hockey_stats` with inputs for team and year to scrape data from the "scoring Regular Season" table, and (b) use iteration techniques to scrape and combine 4 years worth of data.  Here are some functions you might consider:
+
+- `row_to_names(row_number = 1)` from the `janitor` package
+- `clean_names()` also from the `janitor` package
+- `bow()` and `scrape()` from the `polite` package
+- `str_c()` from the `stringr` package (for creating urls with user inputs)
+- `map2()` and `list_rbind()` for iterating and combining years
+
+Try following these steps:
+
+1) Be sure you can find and clean the correct table from the 2001 season.
+```{r}
+"https://www.hockey-reference.com/teams/" + team + "/" + year + ".html"
+```
+
+
+2) Organize your `rvest` code from (1) into functions from the `polite` package.
+```{r}
+library(tidyverse)
+library(rvest)
+library(polite)
+library(janitor)
+
+hockey_stats <- function(team, year) {
+  
+  url <- str_c("https://www.hockey-reference.com/teams/",
+               team, "/", year, ".html")
+  
+  session <- bow(url, force = TRUE)
+  
+  tables <- scrape(session) |>
+    html_nodes("table") |>
+    html_table(header = TRUE, fill = TRUE)
+  
+  # inspect tables first if needed
+  stats_raw <- tables[[1]]
+  
+  stats_clean <- stats_raw |>
+    row_to_names(row_number = 1) |>
+    clean_names() |>
+    as_tibble() |>
+    filter(player != "Player") |>
+    mutate(year = year) |>
+    select(
+      player,
+      year,
+      age,
+      pos,
+      gp,
+      pts
+    )
+  
+  stats_clean
+}
+```
+
+
+3) Place the code from (2) into a function where the user can input a team and year.  You would then adjust the url accordingly and produce a clean table for the user.
+```{r}
+hockey_stats <- function(team, year) {
+  
+  # Build URL
+  url <- str_c("https://www.hockey-reference.com/teams/", team, "/", year, ".html")
+  
+  # Start polite session
+  session <- bow(url, force = TRUE)
+  
+  # Scrape tables
+  tables <- scrape(session) |>
+    html_nodes("table") |>
+    html_table(header = TRUE, fill = TRUE)
+  
+  # Select correct table (adjust if needed)
+  stats_raw <- tables[[1]]
+  
+  # Clean the data
+  stats_clean <- stats_raw |>
+    row_to_names(row_number = 1) |>
+    clean_names() |>
+    as_tibble() |>
+    filter(player != "Player") |>
+    mutate(year = year) |>
+    select(player, year, age, pos, gp, pts)
+  
+  # Return result
+  stats_clean
+}
+```
+
+
+
+4) Use `map2` and `list_rbind` to build one data set containing Minnesota Wild data from 2001-2004.
+
+```{r}
+years <- 2001:2004
+teams <- rep("MIN", length(years))
+
+wild_2001_2004 <- map2(teams, years, hockey_stats) |>
+  list_rbind()
+
+wild_2001_2004
+```
+
+
+## start nymber 3 over 
+
+```{r}
+#| warning: FALSE
+
+library(janitor)
+
+robotstxt::paths_allowed("https://www.hockey-reference.com/teams/MIN/2001.html")
+url <- str_c("https://www.hockey-reference.com/teams/MIN/2001.html")
+player_url <- read_html(url)
+player_stat <- html_nodes(player_url, css = "table")
+html_table(player_stat, header = TRUE, fill = TRUE) 
+html_table(player_stat, header = TRUE, fill = TRUE)[[4]]
+html_table(player_stat, header = TRUE, fill = TRUE)[[4]] |>
+  row_to_names(row_number = 1)
+
+player_tibble <- html_table(player_stat, header = TRUE, fill = TRUE)[[4]] |>
+  row_to_names(row_number = 1) |>
+  clean_names()
+player_tibble
+
+# perform the steps above with the polite package
+session <- bow("https://www.hockey-reference.com/teams/MIN/2001.html", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(css = "table") |>
+  html_table(header = TRUE, fill = TRUE)
+player_tibble <- result[[4]] |>
+  row_to_names(row_number = 1) |>
+  clean_names()
+player_tibble
+
+# write function to scrape data from a single year for a specific team
+hockey_stats <- function(team = "MIN", year = 2001) {
+  url <- str_c("https://www.hockey-reference.com/teams/",team,"/",year,".html")
+  session <- bow(url, force = TRUE)
+
+  result <- scrape(session) |>
+    html_nodes(css = "table") |>
+    html_table(header = TRUE, fill = TRUE)
+  player_tibble <- result[[4]] |>
+    row_to_names(row_number = 1) |>
+    clean_names() |>
+    mutate(year = year) |>
+    select(player, year, age, pos, gp, pts)
+  player_tibble
+}
+
+hockey_stats("MIN", 2001)
+
+# use map function to scrape data from 2001 to 2004 and combine into 
+#   a single data set
+teams <- rep("MIN", 4)
+years <- 2001:2004
+temp <- map2(teams, years, hockey_stats)
+hockey_data_4yrs <- list_rbind(temp) 
+hockey_data_4yrs
+
+```
+

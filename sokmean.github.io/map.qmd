@@ -1,0 +1,345 @@
+---
+title: "Map"
+---
+
+You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2026/blob/main/12_maps.qmd).  Just hit the Download Raw File button.
+
+
+```{r}
+#| message: false
+#| warning: false
+
+# Initial packages required (we'll be adding more)
+library(tidyverse)
+library(maps)
+library(lubridate)
+library(leaflet)
+library(sf)
+library(rvest)
+library(viridis)
+library(mdsr) 
+library(htmltools)
+# package associated with our MDSR book
+```
+
+
+### On Your Own
+
+1. Let's return to our example from above where we recreated an [interactive choropleth map](https://rstudio.github.io/leaflet/articles/choropleths.html) of population densities by US state.  Recall how that plot was very suspicious?  The population density data that came with the state geometries from [our source](https://rstudio.github.io/leaflet/json/us-states.geojson) seemed incorrect. 
+
+In `09_table_scraping.qmd` (On Your Own #1) we went out and found the real statewise population densities (from [here](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density)) and created a tidy data frame.  Now let's merge that with our state geometry shapefiles and regenerate our interactive choropleth map.
+
+```{r}
+# Code from OYO #1 in 09_table_scraping.qmd
+
+library(rvest)
+library(polite)
+
+session <- bow("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density", force = TRUE)
+
+result <- scrape(session) |>
+  html_nodes(css = "table") |> 
+  html_table(header = TRUE, fill = TRUE)
+density_table <- result[[1]]
+density_table
+
+density_data <- density_table |>
+  select(1, 2, 4, 5) |>
+  filter(!row_number() == 1) |>
+  rename(Land_area = `Land area`) |>
+  mutate(state_name = str_to_lower(as.character(Location)),
+         Density = parse_number(Density),
+         Population = parse_number(Population),
+         Land_area = parse_number(Land_area)) |>
+  select(-Location)
+
+density_data
+```
+
+```{r}
+# merge with the shapefile
+state1 <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+select(name, geometry)|>
+mutate(state_name = str_to_lower(name))
+density_map_sf <- state1 |>
+left_join(density_data, by = "state_name")|>
+filter(!(name %in% c( "Alaska", " Hawaii", "Puerto Rico")))
+# Now I want to check
+density_map_sf |>
+st_drop_geometry() |>
+count()
+```
+
+```{r}
+# Making interactive map
+# Create color bins
+bins <- c(0, 10, 25, 50, 100, 250, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", domain = density_map_sf$Density, bins = bins)
+# Create hover labels
+labels <- density_map_sf |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Density: ", round(Density, 1), " people / sq mile<br/>",
+"Population: ", scales::comma(Population), "<br/>",
+"Land area: ", scales::comma(Land_area), " sq mi"
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(density_map_sf) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal(Density),
+weight = 1,
+color = "black",
+opacity = 1,
+fillOpacity = 0.8,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#888",
+bringToFront = TRUE
+),
+label = labels,
+labelOptions = labelOptions(
+direction = "auto",
+textsize = "14px",
+style = list("font-weight" = "normal", padding = "3px 8px")
+)
+) |>
+addLegend(
+pal = pal,
+values = ~Density,
+opacity = 0.8,
+title = "Population density",
+position = "bottomright"
+)
+```
+
+
+2. The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states.  See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
+
+Your task is to create a *two* meaningful choropleth plots, one using a numeric variable and one using a categorical variable from `poliscidata::states`.  You should make *two* versions of each plot: a static plot using the `maps` package and `ggplot()`, and an interactive plot using the `sf` package and `leaflet()`.  Write a sentence or two describing what you can learn from each plot.
+
+Here's some R code and hints to get you going:
+
+```{r}
+#| message: false
+#| warning: false
+
+# Get info to draw US states for geom_polygon (connect the lat-long points)
+library(maps)
+states_polygon <- as_tibble(map_data("state")) |>
+  select(region, group, order, lat, long)
+
+# See what the state (region) levels look like in states_polygon
+unique(states_polygon$region)
+
+
+# Get info to draw US states for geom_sf and leaflet (simple features object 
+#   with multipolygon geometry column)
+library(sf)
+states_sf <- 
+  read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+  select(name, geometry)
+
+# See what the state (name) levels look like in states_sf
+unique(states_sf$name)
+
+
+# Load in state-wise data for filling our choropleth maps
+#   (Note that I selected my two variables of interest to simplify)
+library(poliscidata)   # may have to install first
+polisci_data <- as_tibble(poliscidata::states) |>
+  select(state, carfatal07, cook_index3)
+
+# See what the state (state) levels look like in polisci_data
+unique(polisci_data$state)   # can't see trailing spaces but can see
+                             #   lack of internal spaces
+print(polisci_data)   # can see trailing spaces
+```
+
+R code hints:
+
+- stringr functions like `str_squish` and `str_to_lower` and `str_replace_all` (be sure to carefully look at your keys!)
+- *_join functions (make sure they preserve classes)
+- filter so that you only have 48 contiguous states (and maybe DC)
+- for help with colors: https://rstudio.github.io/leaflet/reference/colorNumeric.html
+- be sure labels pop up when scrolling with leaflet
+
+
+```{r}
+# Make sure all keys have the same format before joining:
+#   all lower case, no internal or external spaces
+polisci_data1 <- polisci_data |>
+mutate(
+state_key = state |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
+
+states_polygon1 <- states_polygon |>
+mutate(
+state_key = region |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
+states_sf1 <- states_sf |>
+mutate(
+state_key = name |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
+```
+
+```{r}
+# Now we can merge data sets together for the static and the interactive plots
+
+
+# Merge with states_polygon (static)
+states_static <- states_polygon1 |>
+left_join(polisci_data1, by = "state_key") |>
+filter(!(region %in% c( "Alaska", " Hawaii", "Puerto Rico")))
+# Check that merge worked for 48 contiguous states
+states_static |>
+distinct(region)|>
+count()
+# Check that merge worked for 48 contiguous states
+
+# Merge with states_sf (static or interactive)
+states_interactive <-states_sf1 |>
+left_join(polisci_data1, by = "state_key") |>
+filter(!(name %in% c("Alaska", " Hawaii", " Puerto Rico")))
+# Check that merge worked for 48 contiguous states
+states_interactive |>
+st_drop_geometry()|>
+count()
+```
+
+
+Numeric variable (static plot):
+
+```{r}
+ggplot(states_static, aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = carfatal07), color = "white", linewidth = 0.2) +
+coord_map() +
+theme_void() +
+scale_fill_viridis_c(na.value = "grey90") +
+labs(fill = "Car fatalities\n(2007)",
+title = "Motor vehicle fatality rates by state")
+```
+
+
+Numeric variable (interactive plot):
+
+```{r}
+pal_num <- colorNumeric(
+palette = "viridis",
+domain = states_interactive$carfatal07,
+na.color = "grey90"
+)
+labels_num <- states_interactive |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Car fatalities (2007): ", round(carfatal07, 2)
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(states_interactive) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal_num(carfatal07),
+weight = 1,
+color = "white",
+opacity = 1,
+fillOpacity = 0.8,
+label = labels_num,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#666",
+bringToFront = TRUE
+)
+)
+```
+
+
+Categorical variable (static plot):
+
+```{r}
+# be really careful with matching color order to factor level order
+states_interactive |>
+st_drop_geometry() |>
+count(cook_index3)
+
+# Make factor levels explicit so color order stays consistent
+states_static <- states_static |>
+mutate(cook_index3 = factor(cook_index3))
+ggplot(states_static, aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = cook_index3), color = "black", linewidth = 0.2) +
+coord_map() +
+theme_void() +
+scale_fill_brewer(palette = "RdBu", na.value = "grey90") +
+labs(fill = "Cook index",
+title = "State partisan leaning")
+```
+
+
+Categorical variable (interactive plot):
+
+```{r}
+# may use colorFactor() here
+# may use colorFactor() here
+states_interactive <- states_interactive |>
+mutate(cook_index3 = factor(cook_index3))
+pal_cat <- colorFactor(
+palette = "RdBu",
+domain = states_interactive$cook_index3,
+na.color = "grey90"
+)
+labels_cat <- states_interactive |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Cook index: ", cook_index3
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(states_interactive) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal_cat(cook_index3),
+weight = 1,
+color = "white",
+opacity = 1,
+fillOpacity = 0.8,
+label = labels_cat,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#111",
+bringToFront = TRUE
+)
+) |>
+addLegend(
+pal = pal_cat,
+values = ~cook_index3,
+title = "Cook index",
+position = "bottomright"
+)
+```
+
+

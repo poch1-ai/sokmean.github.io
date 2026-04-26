@@ -15,9 +15,14 @@ You can download this .qmd file from [here](https://github.com/joeroith/264_spri
 
 # Initial packages required (we'll be adding more)
 library(tidyverse)
+library(maps)
+library(lubridate)
+library(leaflet)
+library(sf)
+library(rvest)
+library(viridis)
 library(mdsr)      # package associated with our MDSR book
 ```
-
 
 ### Opening example
 
@@ -421,6 +426,67 @@ density_data <- density_table |>
 density_data
 ```
 
+```{r}
+# merge with the shapefile
+state1 <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
+select(name, geometry)|>
+mutate(state_name = str_to_lower(name))
+density_map_sf <- state1 |>
+left_join(density_data, by = "state_name")|>
+filter(!(name %in% c( "Alaska", " Hawaii", "Puerto Rico")))
+# Now I want to check
+density_map_sf |>
+st_drop_geometry() |>
+count()
+```
+
+```{r}
+# Making interactive map
+# Create color bins
+bins <- c(0, 10, 25, 50, 100, 250, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", domain = density_map_sf$Density, bins = bins)
+# Create hover labels
+labels <- density_map_sf |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Density: ", round(Density, 1), " people / sq mile<br/>",
+"Population: ", scales::comma(Population), "<br/>",
+"Land area: ", scales::comma(Land_area), " sq mi"
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(density_map_sf) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal(Density),
+weight = 1,
+color = "black",
+opacity = 1,
+fillOpacity = 0.8,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#888",
+bringToFront = TRUE
+),
+label = labels,
+labelOptions = labelOptions(
+direction = "auto",
+textsize = "14px",
+style = list("font-weight" = "normal", padding = "3px 8px")
+)
+) |>
+addLegend(
+pal = pal,
+values = ~Density,
+opacity = 0.8,
+title = "Population density",
+position = "bottomright"
+)
+```
+
 
 2. The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states.  See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
 
@@ -476,7 +542,34 @@ R code hints:
 ```{r}
 # Make sure all keys have the same format before joining:
 #   all lower case, no internal or external spaces
+polisci_data1 <- polisci_data |>
+mutate(
+state_key = state |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
 
+states_polygon1 <- states_polygon |>
+mutate(
+state_key = region |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
+states_sf1 <- states_sf |>
+mutate(
+state_key = name |>
+str_squish() |>
+str_to_lower() |>
+str_replace_all(" "
+,
+"")
+)
 ```
 
 ```{r}
@@ -484,28 +577,72 @@ R code hints:
 
 
 # Merge with states_polygon (static)
-
+states_static <- states_polygon1 |>
+left_join(polisci_data1, by = "state_key") |>
+filter(!(region %in% c( "Alaska", " Hawaii", "Puerto Rico")))
 # Check that merge worked for 48 contiguous states
-
+states_static |>
+distinct(region)|>
+count()
+# Check that merge worked for 48 contiguous states
 
 # Merge with states_sf (static or interactive)
-
+states_interactive <-states_sf1 |>
+left_join(polisci_data1, by = "state_key") |>
+filter(!( name %in% c("Alaska", " Hawaii", " Puerto Rico")))
 # Check that merge worked for 48 contiguous states
-
+states_interactive |>
+st_drop_geometry()|>
+count()
 ```
 
 
 Numeric variable (static plot):
 
 ```{r}
-
+ggplot(states_static, aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = carfatal07), color = "white", linewidth = 0.2) +
+coord_map() +
+theme_void() +
+scale_fill_viridis_c(na.value = "grey90") +
+labs(fill = "Car fatalities\n(2007)",
+title = "Motor vehicle fatality rates by state")
 ```
 
 
 Numeric variable (interactive plot):
 
 ```{r}
-# it's okay to skip a legend here
+pal_num <- colorNumeric(
+palette = "viridis",
+domain = states_interactive$carfatal07,
+na.color = "grey90"
+)
+labels_num <- states_interactive |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Car fatalities (2007): ", round(carfatal07, 2)
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(states_interactive) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal_num(carfatal07),
+weight = 1,
+color = "white",
+opacity = 1,
+fillOpacity = 0.8,
+label = labels_num,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#666",
+bringToFront = TRUE
+)
+)
 ```
 
 
@@ -513,6 +650,20 @@ Categorical variable (static plot):
 
 ```{r}
 # be really careful with matching color order to factor level order
+states_interactive |>
+st_drop_geometry() |>
+count(cook_index3)
+
+# Make factor levels explicit so color order stays consistent
+states_static <- states_static |>
+mutate(cook_index3 = factor(cook_index3))
+ggplot(states_static, aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = cook_index3), color = "black", linewidth = 0.2) +
+coord_map() +
+theme_void() +
+scale_fill_brewer(palette = "RdBu", na.value = "grey90") +
+labs(fill = "Cook index",
+title = "State partisan leaning")
 ```
 
 
@@ -520,6 +671,45 @@ Categorical variable (interactive plot):
 
 ```{r}
 # may use colorFactor() here
+# may use colorFactor() here
+states_interactive <- states_interactive |>
+mutate(cook_index3 = factor(cook_index3))
+pal_cat <- colorFactor(
+palette = "RdBu",
+domain = states_interactive$cook_index3,
+na.color = "grey90"
+)
+labels_cat <- states_interactive |>
+mutate(
+label_text = str_c(
+"<strong>", name, "</strong><br/>",
+"Cook index: ", cook_index3
+)
+) |>
+pull(label_text) |>
+lapply(HTML)
+leaflet(states_interactive) |>
+addTiles() |>
+setView(-96, 37.8, 4) |>
+addPolygons(
+fillColor = ~pal_cat(cook_index3),
+weight = 1,
+color = "white",
+opacity = 1,
+fillOpacity = 0.8,
+label = labels_cat,
+highlightOptions = highlightOptions(
+weight = 3,
+color = "#111",
+bringToFront = TRUE
+)
+) |>
+addLegend(
+pal = pal_cat,
+values = ~cook_index3,
+title = "Cook index",
+position = "bottomright"
+)
 ```
 
 

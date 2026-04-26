@@ -16,7 +16,7 @@ about:
 1.  ::: {#intro-heading}
     ## Hey! this is Sokmean
 
-    Thank you for stopping by! My full name is Sokmean Poch.I was born and raised in Cambodia. I moved to Singapore in 2019 for school. Right now, I'm a student at [St. Olaf College](https://wp.stolaf.edu/). I'm doing Quantitative Economics and Statistics doubled majors. This is my first time building a website and I will display my work in data science 2. I am proud because I'm so ready to show it off to my niece, my mama, my dogs, cats and chickens. I'm sure they are proud of me too!
+    Thank you for stopping by! I was born and raised in Cambodia. I moved to Singapore in 2019 for school. Right now, I'm a student at [St. Olaf College](https://wp.stolaf.edu/). I'm doing Quantitative Economics and Statistics doubled majors. This is my first time building a website and I will display my work in data science 2. I am proud because I'm so ready to show it off to my niece, my mama, my dogs, cats and chickens. I'm sure they are proud of me too!
 
     ### 5 Fun Facts About Me
 
@@ -24,7 +24,7 @@ about:
 
     2.  I shop every time I submit a data science's project because I truly deserve it ( this one too)
 
-    3.  My lashes will be on whenever I'm stressed, the longer the lashes, the harder time I'm going through. Sometimes I'm so close to fly with them
+    3.  My lashes will be on whenever I'm stressed, the longer the lashes, the harder time I'm going through. Sometimes I'm so close to fly with them too
 
     4.  All of my friends think that I'm really good at keeping secret but in fact, I just didn't understand 97.9% of what they've been talking about
 

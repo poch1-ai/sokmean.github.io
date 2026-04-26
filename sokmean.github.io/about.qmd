@@ -1,6 +1,8 @@
 ---
-title: "Text Analysis : The shift of the Fedaral Reserve before and after COVID-19 "
+title: "Text Analysis"
 ---
+
+# How FOMC Communication Shifted Before and After COVID-19
 
 # 1. Introduction
 

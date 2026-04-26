@@ -2,14 +2,14 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Text Analysis",
+    "title": "Text Analysis : The shift of the Fedaral Reserve before and after COVID-19",
     "section": "",
     "text": "In The United State, The Federal Open Market Commitee ( FOMC)1 regulary release its statement every months after each meeting to explain its assessment of economic condition and its decisions regarding to interest rates and monetary policy ( whether increase/ decrease of interest rate or money supply). These statements let us get some insight about how the Federal reserve interprets the change in inflation, employment and overall economic activity.\nThe COVID-19 had severe affect to the economy around the world. This leads to a sharp change in economic activity. Economic growth declined, unemployment rose dramatically, and financial markets experienced significant volatility.During such periods of uncertainty, the way policymakers communicate economic conditions becomes particularly important.\nIn this project I will use text analysis to examine how the language in FOMC statements changed before, during, and after the COVID-19 shock. I will analyse the content of FOMC statement from 2015 to 2023, mainly focus on several aspects of communication including, the most frequently used words in the statements, whether the language signals contraction or expansion, how often the Fed uses positive or negative economic language and how often the Fed uses positive versus negative economic language."
   },
   {
     "objectID": "about.html#footnotes",
     "href": "about.html#footnotes",
-    "title": "Text Analysis",
+    "title": "Text Analysis : The shift of the Fedaral Reserve before and after COVID-19",
     "section": "Footnotes",
     "text": "Footnotes\n\n\n—. “The Fed - Meeting Calendars and Information.” Board of Governors of the Federal Reserve System,https://www.federalreserve.gov/monetarypolicy/fomc.htm. Accessed 2 Mar. 2026.↩︎"
   },
@@ -18,6 +18,6 @@
     "href": "index.html",
     "title": "Welcome!",
     "section": "",
-    "text": "Hey! this is Sokmean\nThank you for stopping by! My full name is Sokmean Poch.I was born and raised in Cambodia. I moved to Singapore in 2019 for school. Right now, I’m a student at St. Olaf College. I’m doing Quantitative Economics and Statistics doubled majors. This is my first time building a website. I am proud because I’m so ready to show it off to my niece, my mama, my dogs, cats and chickens. I’m sure they are proud of me too!\n5 Fun Facts About Me\n\nData Science only starts to make sense to me at 2am\nI shop every time I submit a data science’s project because I truly deserve it ( this one too)\nMy lashes will be on whenever I’m stressed, the longer the lashes, the harder time I’m going through. Sometimes I’m so close to fly with them\nAll of my friends think that I’m really good at keeping secret but in fact, I just didn’t understand 97.9% of what they’ve been talking about\nI love love, and you should too"
+    "text": "Hey! this is Sokmean\nThank you for stopping by! My full name is Sokmean Poch.I was born and raised in Cambodia. I moved to Singapore in 2019 for school. Right now, I’m a student at St. Olaf College. I’m doing Quantitative Economics and Statistics doubled majors. This is my first time building a website and I will display my work in data science 2. I am proud because I’m so ready to show it off to my niece, my mama, my dogs, cats and chickens. I’m sure they are proud of me too!\n5 Fun Facts About Me\n\nData Science only starts to make sense to me at 2am\nI shop every time I submit a data science’s project because I truly deserve it ( this one too)\nMy lashes will be on whenever I’m stressed, the longer the lashes, the harder time I’m going through. Sometimes I’m so close to fly with them\nAll of my friends think that I’m really good at keeping secret but in fact, I just didn’t understand 97.9% of what they’ve been talking about\nI love love, and you should too"
   }
 ]

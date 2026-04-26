@@ -1,5 +1,5 @@
 ---
-title: "Text Analysis"
+title: "Text Analysis : The shift of the Fedaral Reserve before and after COVID-19 "
 ---
 
 # 1. Introduction
@@ -104,7 +104,6 @@ In this section, I count individual words after removing stop words to see most 
 #| echo: false
 #| warning: FALSE
 #| message: FALSE
-#| results: 'hide'
 #| fig-width: 5
 #| fig-height: 3
 #| out-width: "70%"
@@ -112,7 +111,7 @@ In this section, I count individual words after removing stop words to see most 
 words_fed <- fed_words |>
   anti_join(stop_words) |>
   count(word) |>
-  filter(word != "NA") |>
+  filter(!is.na(word)) |>
   arrange(desc(n))
 
 words_size <- words_fed |>
@@ -138,9 +137,8 @@ expansion <- "\\b(strong|robust|solid|expanding|improving|resilient|moderate|str
 contraction <- "\\b(slow(ed|ing|down)?|declin(e|ing)|weak(en|ening)?|contraction|recession|deteriorat(e|ion))\\b"
 ```
 
-```{r}
+```{r, echo=FALSE}
 #| results: 'hide'
- #| echo: false
 fed_cycle <- fed2 |>
   mutate(
     expansion_n = str_count(text_clean, expansion),

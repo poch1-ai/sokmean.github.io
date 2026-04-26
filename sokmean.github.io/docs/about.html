@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Text Analysis – sokmean.github.io</title>
+<title>Text Analysis : The shift of the Fedaral Reserve before and after COVID-19 – sokmean.github.io</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,41 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -103,6 +68,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="site_libs/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet">
+<script src="site_libs/wordcloud2-0.0.1/wordcloud2-all.js"></script>
+<script src="site_libs/wordcloud2-0.0.1/hover.js"></script>
+<script src="site_libs/wordcloud2-binding-0.2.1/wordcloud2.js"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -131,7 +102,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./about.html" aria-current="page"> 
-<span class="menu-text">Text Analysis</span></a>
+<span class="menu-text">Text Analysis : The shift of the Fedaral Reserve before and after COVID-19</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -163,7 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Text Analysis</h1>
+<h1 class="title">Text Analysis : The shift of the Fedaral Reserve before and after COVID-19</h1>
 </div>
 
 
@@ -199,20 +170,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>4. Results</h1>
 <p><u><strong><em>4.1.The most frequently used words in the statements</em></strong></u></p>
 <p>In this section, I count individual words after removing stop words to see most common terms in FOMC statements. This will help me see what are the words that are emphasized the which can be Inflation or unemployment or market.I use wordcloud2() to visualize the most frequent words.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-72e60939cc90ddfca881" style="width:70%;height:288px;"></div>
+<script type="application/json" data-for="htmlwidget-72e60939cc90ddfca881">{"x":{"word":["inflation","committee","economic","percent","market","2","rate","federal","conditions","range","labor","policy","funds","employment","securities","target","term","maximum","information","monetary","activity","financial","developments","committee's","agency","measures","expected","expectations","1","stance","outlook","recent","remain","run","indicators","objective","continue","mortgage","energy","price","account","pressures","time","goals","risks","expects","support","including","monitor","4","consistent","holdings","maintain","months","prices","levels","pace","remains","stability","strong","accommodative","continued","international","readings","decided","low","wide","based","seeks","economy","treasury","gains","job","realized","adjustments","incoming","unemployment","assess","month","determining","foster","mandate","moderate","progress","implications","medium","future","continues","gradual","relative","spending","declines","symmetric","achieve","assessment","changed","household","received","reflecting","remained"],"freq":[349,300,181,179,177,168,158,151,137,131,127,123,104,98,89,87,85,81,79,78,76,74,72,69,66,64,61,60,59,59,57,57,57,55,52,50,47,46,45,45,44,44,44,43,43,42,42,41,41,39,39,39,39,39,39,37,37,37,37,37,36,36,36,36,35,35,35,34,34,32,32,30,30,30,29,29,28,27,27,26,26,26,26,26,25,25,24,23,23,23,23,22,22,21,21,21,21,21,21,21],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":10,"weightFactor":0.2578796561604584,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
+<p>Shows the most frequently used words in FOMC policy statements after removing common stopwords. Several key economic terms appear prominently, including inflation, economic, rate, and market. This suggests that the statements largely focus on inflation conditions and monetary policy decisions, which are central responsibilities of the Federal Reserve.</p>
+</div>
+</div>
 <p>This figure is a word cloud displaying the most frequent words used in the FOMC policy statement from 2015-2023 after removing common stop words. The visualization does not have axes but in stead, the size of each words represents its frequency in the statement. The larger ones appear more often in the text. Word frequency range from relatively small count for less common terms to higher count with the larger word in the middle. The appearance shows words such as ” Inflation”, “committtee”, ” economics”, ” market” appears most frequent which indicated that the FOMC communication strongly emphasizes inflation condition, monetary policy decisions, and overall economic activity</p>
 <p><u><strong><em>4.2.When did the FOMC statement language shows that the economy is expanding or contracting, Business Cycle Signal?</em></strong></u></p>
 <p>I create one regular expression for expansion-related words such as “strong,” “robust,” and “improving,” and another for contraction-related words such as “slowed,” “decline,” and “recession.” I used \b to match whole words only, and grouped endings like (ed|ing) to capture multiple forms of the same word.I used str_count() to count how often expansion and contraction words appear in each statement. Then I divided by total words to create a normalized rate, so longer statements would not automatically have larger counts.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="co">#| echo: false</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fed_cycle <span class="ot">&lt;-</span> fed2 <span class="sc">|&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">expansion_n =</span> <span class="fu">str_count</span>(text_clean, expansion),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">contraction_n =</span> <span class="fu">str_count</span>(text_clean, contraction),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">expansion_rate =</span> expansion_n <span class="sc">/</span> total_words,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">contraction_rate =</span> contraction_n <span class="sc">/</span> total_words,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cycle_signal =</span> expansion_rate <span class="sc">-</span> contraction_rate</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">

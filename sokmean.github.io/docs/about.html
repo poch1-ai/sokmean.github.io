@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5b8f9b2f3cffee265242a5d44fbb1e00.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-250a0ad726c327aed60c1b8aba93cc6c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/bootstrap/bootstrap-dark-5100b8561cd7f6cd8c35657ed6fe7ee7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-5b8f9b2f3cffee265242a5d44fbb1e00.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-250a0ad726c327aed60c1b8aba93cc6c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,6 +80,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/wordcloud2-binding-0.2.1/wordcloud2.js"></script>
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -273,6 +274,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./map.html"> 
 <span class="menu-text">Map</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./motivation.html"> 
+<span class="menu-text">Motivation</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
@@ -333,9 +338,8 @@ ul.task-list li input[type="checkbox"] {
 <p>In this section, I count individual words after removing stop words to see most common terms in FOMC statements. This will help me see what are the words that are emphasized the which can be Inflation or unemployment or market.I use wordcloud2() to visualize the most frequent words.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-9150821768cd2124eb25" style="width:70%;height:288px;"></div>
-<script type="application/json" data-for="htmlwidget-9150821768cd2124eb25">{"x":{"word":["inflation","committee","economic","percent","market","2","rate","federal","conditions","range","labor","policy","funds","employment","securities","target","term","maximum","information","monetary","activity","financial","developments","committee's","agency","measures","expected","expectations","1","stance","outlook","recent","remain","run","indicators","objective","continue","mortgage","energy","price","account","pressures","time","goals","risks","expects","support","including","monitor","4","consistent","holdings","maintain","months","prices","levels","pace","remains","stability","strong","accommodative","continued","international","readings","decided","low","wide","based","seeks","economy","treasury","gains","job","realized","adjustments","incoming","unemployment","assess","month","determining","foster","mandate","moderate","progress","implications","medium","future","continues","gradual","relative","spending","declines","symmetric","achieve","assessment","changed","household","received","reflecting","remained"],"freq":[349,300,181,179,177,168,158,151,137,131,127,123,104,98,89,87,85,81,79,78,76,74,72,69,66,64,61,60,59,59,57,57,57,55,52,50,47,46,45,45,44,44,44,43,43,42,42,41,41,39,39,39,39,39,39,37,37,37,37,37,36,36,36,36,35,35,35,34,34,32,32,30,30,30,29,29,28,27,27,26,26,26,26,26,25,25,24,23,23,23,23,22,22,21,21,21,21,21,21,21],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":10,"weightFactor":0.2578796561604584,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
-<p>Shows the most frequently used words in FOMC policy statements after removing common stopwords. Several key economic terms appear prominently, including inflation, economic, rate, and market. This suggests that the statements largely focus on inflation conditions and monetary policy decisions, which are central responsibilities of the Federal Reserve.</p>
+<div class="wordcloud2 html-widget html-fill-item" id="htmlwidget-2152c3054a408d932cd9" style="width:100%;height:288px;"></div>
+<script type="application/json" data-for="htmlwidget-2152c3054a408d932cd9">{"x":{"word":["inflation","committee","economic","percent","market","2","rate","federal","conditions","range","labor","policy","funds","employment","securities","target","term","maximum","information","monetary","activity","financial","developments","committee's","agency","measures","expected","expectations","1","stance","outlook","recent","remain","run","indicators","objective","continue","mortgage","energy","price","account","pressures","time","goals","risks","expects","support","including","monitor","4","consistent","holdings","maintain","months","prices","levels","pace","remains","stability","strong","accommodative","continued","international","readings","decided","low","wide","based","seeks","economy","treasury","gains","job","realized","adjustments","incoming","unemployment","assess","month","determining","foster","mandate","moderate","progress","implications","medium","future","continues","gradual","relative","spending","declines","symmetric","achieve","assessment","changed","household","received","reflecting","remained"],"freq":[349,300,181,179,177,168,158,151,137,131,127,123,104,98,89,87,85,81,79,78,76,74,72,69,66,64,61,60,59,59,57,57,57,55,52,50,47,46,45,45,44,44,44,43,43,42,42,41,41,39,39,39,39,39,39,37,37,37,37,37,36,36,36,36,35,35,35,34,34,32,32,30,30,30,29,29,28,27,27,26,26,26,26,26,25,25,24,23,23,23,23,22,22,21,21,21,21,21,21,21],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":10,"weightFactor":0.2578796561604584,"backgroundColor":"white","gridSize":0,"minRotation":-0.7853981633974483,"maxRotation":0.7853981633974483,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
 </div>
 </div>
 <p>This figure is a word cloud displaying the most frequent words used in the FOMC policy statement from 2015-2023 after removing common stop words. The visualization does not have axes but in stead, the size of each words represents its frequency in the statement. The larger ones appear more often in the text. Word frequency range from relatively small count for less common terms to higher count with the larger word in the middle. The appearance shows words such as ” Inflation”, “committtee”, ” economics”, ” market” appears most frequent which indicated that the FOMC communication strongly emphasizes inflation condition, monetary policy decisions, and overall economic activity</p>
@@ -346,7 +350,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="about_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
-<figcaption>Shows the net expansion vs contraction signal in the FOMC statements by year. Before 2020 ( Pre-Covid), exspansionary langauges increases then drops sharply during COVID shock, which shows more cautious economics communication by the federal reserve.</figcaption>
+<figcaption>The net expansion vs contraction signal in the FOMC statements by year. Before 2020 ( Pre-Covid), exspansionary langauges increases then drops sharply during COVID shock, which shows more cautious economics communication by the federal reserve.</figcaption>
 </figure>
 </div>
 </div>
@@ -359,7 +363,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="about_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Shows good vs bad economic terms in FOMC statement by year.Positive economic language dominates most years, while negative language increases during the COVID-19 shock (2020–2021), reflecting the economic disruption caused by the pandemic.</figcaption>
+<figcaption>Good vs Bad economic terms in FOMC statement by year.Positive economic language dominates most years, while negative language increases during the COVID-19 shock (2020–2021), reflecting the economic disruption caused by the pandemic.</figcaption>
 </figure>
 </div>
 </div>
@@ -372,7 +376,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="about_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Shows most frequent positive and negative sentiment words in FOMC statements by year.In 2020 and 2021, negative words such as risks, virus, and challenging appear more frequently, reflecting the economic uncertainty during the COVID-19 pandemic. At the samw time, positive words like support and progress emphasize policy support and economic recovery.</figcaption>
+<figcaption>Most frequent positive and negative sentiment words in FOMC statements by year.In 2020 and 2021, negative words such as risks, virus, and challenging appear more frequently, reflecting the economic uncertainty during the COVID-19 pandemic. At the samw time, positive words like support and progress emphasize policy support and economic recovery.</figcaption>
 </figure>
 </div>
 </div>

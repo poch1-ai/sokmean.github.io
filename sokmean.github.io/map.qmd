@@ -7,6 +7,7 @@ editor_options:
 ```{r, echo = FALSE}
 #| message: false
 #| warning: false
+#| results: 'hide'
 
 # Initial packages required (we'll be adding more)
 library(tidyverse)
@@ -21,15 +22,14 @@ library(htmltools)
 # package associated with our MDSR book
 ```
 
-
 The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states. See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
 
 In this tab, I will create a *two* meaningful choropleth plots, one using a numeric variable and one using a categorical variable from `poliscidata::states`. You will see *two* versions of each plot: a static plot using the `maps` package and `ggplot()`, and an interactive plot using the `sf` package and `leaflet()`. Finally, I will write a sentence or two describing what I learn from each plot.
 
-```{r}
+```{r, echo=FALSE}
 #| message: false
 #| warning: false
-
+#| results: 'hide'
 # Get info to draw US states for geom_polygon (connect the lat-long points)
 library(maps)
 states_polygon <- as_tibble(map_data("state")) |>
@@ -62,15 +62,9 @@ unique(polisci_data$state)   # can't see trailing spaces but can see
 print(polisci_data)   # can see trailing spaces
 ```
 
-R code hints:
 
-- stringr functions like `str_squish` and `str_to_lower` and `str_replace_all` (be sure to carefully look at your keys!)
-- \*\_join functions (make sure they preserve classes)
-- filter so that you only have 48 contiguous states (and maybe DC)
-- for help with colors: https://rstudio.github.io/leaflet/reference/colorNumeric.html
-- be sure labels pop up when scrolling with leaflet
-
-```{r}
+```{r, echo=FALSE}
+#| results: 'hide'
 # Make sure all keys have the same format before joining:
 #   all lower case, no internal or external spaces
 polisci_data1 <- polisci_data |>
@@ -103,7 +97,8 @@ str_replace_all(" "
 )
 ```
 
-```{r}
+```{r, echo=FALSE}
+#| results: 'hide'
 # Now we can merge data sets together for the static and the interactive plots
 
 
@@ -129,7 +124,7 @@ count()
 
 ### Numeric variable (static plot):
 
-```{r}
+```{r, echo=FALSE}
 ggplot(states_static, aes(x = long, y = lat, group = group)) +
   geom_polygon(aes(fill = carfatal07), color = "white", linewidth = 0.2) +
   coord_map() +
@@ -149,7 +144,7 @@ ggplot(states_static, aes(x = long, y = lat, group = group)) +
 
 ### Numeric variable (interactive plot):
 
-```{r}
+```{r, echo=FALSE}
 pal_num <- colorNumeric(
 palette = "viridis",
 domain = states_interactive$carfatal07,
@@ -188,15 +183,13 @@ bringToFront = TRUE
   )
 ```
 
-*The interactive map reinforces the regional pattern observed in the static map, where southern and rural states tend to have higher motor vehicle fatality rates, while northeastern and coastal states show lower rates. By hovering over each state, we can see the exact values, which highlights how large the differences are across regions.The interactive feature allows users to hover over each state to view precise fatality rates, providing more detailed insight than the static map.*
+*The interactive feature allows users to hover over each state to view precise fatality rates, providing more detailed insight than the static map.*
 
-#Categorical variable (static plot):
+### Categorical variable (static plot)
 
 ```{r}
+#| echo: false
 # be really careful with matching color order to factor level order
-states_interactive |>
-st_drop_geometry() |>
-count(cook_index3)
 
 # Make factor levels explicit so color order stays consistent
 states_static <- states_static |>
@@ -213,9 +206,10 @@ scale_fill_brewer(palette = "RdBu", na.value = "grey90") +
 ```
 
 *This map shows which political party each state tends to support. The pattern shows that many coastal states lean Democratic, while many states in the South, Midwest, and Mountain West lean Republican.*
+
 ### Categorical variable (interactive plot):
 
-```{r}
+```{r, echo=FALSE}
 # may use colorFactor() here
 # may use colorFactor() here
 states_interactive <- states_interactive |>
@@ -258,4 +252,4 @@ position = "bottomright"
 )
 ```
 
-*This interactive map shows each state’s partisan leaning. By hovering over the states, users can see the exact category for each state, making it easier to compare regional political patterns across the country.*
+*By hovering over the states, users can see the exact category for each state, making it easier to compare regional political patterns across the country.*

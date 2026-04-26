@@ -1,0 +1,33 @@
+---
+title: "Motivation"
+---
+
+Thank you so much for exploring my webpage! On this tap, I will show you my motivations for this project.
+
+::::: columns
+::: column
+![](images/tina2.jpeg){width="90%"}
+
+This is my niece. Her name is **Tina**.
+
+What you should know about her:
+
+- Strength: Has nice hair,brows and lashes
+
+- Weakness: Always has a mission to ask 15 question per minute, especially the "Auntie, have you eaten?" question
+:::
+
+::: column
+![](images/mesu.jpeg){width="90%"}
+
+This is my nephew. His name is **Mesu**.
+
+Here is what you should know about him:
+
+- Strength: Has nice teeth
+
+- Weakness: calls me at 2am and then complains to my mom by saying that I never pick up his call
+:::
+:::::
+
+#  Have a nice day!

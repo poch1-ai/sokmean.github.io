@@ -102,13 +102,13 @@ fed_words <- fed2 |>
 
 In this section, I count individual words after removing stop words to see most common terms in FOMC statements. This will help me see what are the words that are emphasized the which can be Inflation or unemployment or market.I use wordcloud2() to visualize the most frequent words.
 
-```{r fig.cap = "Shows the most frequently used words in FOMC policy statements after removing common stopwords. Several key economic terms appear prominently, including inflation, economic, rate, and market. This suggests that the statements largely focus on inflation conditions and monetary policy decisions, which are central responsibilities of the Federal Reserve."}
+```{r}
 #| echo: false
 #| warning: FALSE
 #| message: FALSE
 #| fig-width: 5
 #| fig-height: 3
-#| out-width: "70%"
+#| out-width: "100%"
 
 words_fed <- fed_words |>
   anti_join(stop_words) |>
@@ -151,7 +151,7 @@ fed_cycle <- fed2 |>
   )
 ```
 
-```{r fig.cap = "Shows the net expansion vs contraction signal in the FOMC statements by year. Before 2020 ( Pre-Covid), exspansionary langauges increases then drops sharply during COVID shock, which shows more cautious economics communication by the federal reserve."}
+```{r fig.cap = "The net expansion vs contraction signal in the FOMC statements by year. Before 2020 ( Pre-Covid), exspansionary langauges increases then drops sharply during COVID shock, which shows more cautious economics communication by the federal reserve."}
 #| echo: false
 #| results: 'hide'
 #| fig-width: 5
@@ -220,7 +220,7 @@ year_goodbad <- fed_goodbad |>
   )
 ```
 
-```{r fig.cap = "Shows good vs bad economic terms in FOMC statement by year.Positive economic language dominates most years, while negative language increases during the COVID-19 shock (2020–2021), reflecting the economic disruption caused by the pandemic."}
+```{r fig.cap = "Good vs Bad economic terms in FOMC statement by year.Positive economic language dominates most years, while negative language increases during the COVID-19 shock (2020–2021), reflecting the economic disruption caused by the pandemic."}
 #| echo: false
 #| results: 'hide'
  #| fig-width: 5
@@ -258,7 +258,7 @@ get_sentiments(lexicon = "bing")
 bing_sentiments <- get_sentiments(lexicon = "bing")
 ```
 
-```{r fig.cap = "Shows most frequent positive and negative sentiment words in FOMC statements by year.In 2020 and 2021, negative words such as risks, virus, and challenging appear more frequently, reflecting the economic uncertainty during the COVID-19 pandemic. At the samw time, positive words like support and progress emphasize policy support and economic recovery." }
+```{r fig.cap = "Most frequent positive and negative sentiment words in FOMC statements by year.In 2020 and 2021, negative words such as risks, virus, and challenging appear more frequently, reflecting the economic uncertainty during the COVID-19 pandemic. At the samw time, positive words like support and progress emphasize policy support and economic recovery." }
 #| echo: false
 #| results: 'hide'
  #| fig-width: 5

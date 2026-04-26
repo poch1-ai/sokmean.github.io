@@ -12,12 +12,13 @@ website:
         text: Home
       - about.qmd
       - map.qmd
+      - motivation.qmd
 
+# supplying a light ("minty") and dark ("slate") theme to toggle between
 format:
   html:
-    theme:
-      light: minty
+    theme: 
+      light: lumen
       dark: solar
-
-editor: visual
+    css: styles.css
 

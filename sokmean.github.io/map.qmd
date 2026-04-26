@@ -1,11 +1,10 @@
 ---
 title: "Map"
+editor_options: 
+  chunk_output_type: console
 ---
 
-You can download this .qmd file from [here](https://github.com/joeroith/264_spring_2026/blob/main/12_maps.qmd).  Just hit the Download Raw File button.
-
-
-```{r}
+```{r, echo = FALSE}
 #| message: false
 #| warning: false
 
@@ -23,106 +22,9 @@ library(htmltools)
 ```
 
 
-### On Your Own
+The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states. See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
 
-1. Let's return to our example from above where we recreated an [interactive choropleth map](https://rstudio.github.io/leaflet/articles/choropleths.html) of population densities by US state.  Recall how that plot was very suspicious?  The population density data that came with the state geometries from [our source](https://rstudio.github.io/leaflet/json/us-states.geojson) seemed incorrect. 
-
-In `09_table_scraping.qmd` (On Your Own #1) we went out and found the real statewise population densities (from [here](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density)) and created a tidy data frame.  Now let's merge that with our state geometry shapefiles and regenerate our interactive choropleth map.
-
-```{r}
-# Code from OYO #1 in 09_table_scraping.qmd
-
-library(rvest)
-library(polite)
-
-session <- bow("https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population_density", force = TRUE)
-
-result <- scrape(session) |>
-  html_nodes(css = "table") |> 
-  html_table(header = TRUE, fill = TRUE)
-density_table <- result[[1]]
-density_table
-
-density_data <- density_table |>
-  select(1, 2, 4, 5) |>
-  filter(!row_number() == 1) |>
-  rename(Land_area = `Land area`) |>
-  mutate(state_name = str_to_lower(as.character(Location)),
-         Density = parse_number(Density),
-         Population = parse_number(Population),
-         Land_area = parse_number(Land_area)) |>
-  select(-Location)
-
-density_data
-```
-
-```{r}
-# merge with the shapefile
-state1 <- read_sf("https://rstudio.github.io/leaflet/json/us-states.geojson") |>
-select(name, geometry)|>
-mutate(state_name = str_to_lower(name))
-density_map_sf <- state1 |>
-left_join(density_data, by = "state_name")|>
-filter(!(name %in% c( "Alaska", " Hawaii", "Puerto Rico")))
-# Now I want to check
-density_map_sf |>
-st_drop_geometry() |>
-count()
-```
-
-```{r}
-# Making interactive map
-# Create color bins
-bins <- c(0, 10, 25, 50, 100, 250, 500, 1000, Inf)
-pal <- colorBin("YlOrRd", domain = density_map_sf$Density, bins = bins)
-# Create hover labels
-labels <- density_map_sf |>
-mutate(
-label_text = str_c(
-"<strong>", name, "</strong><br/>",
-"Density: ", round(Density, 1), " people / sq mile<br/>",
-"Population: ", scales::comma(Population), "<br/>",
-"Land area: ", scales::comma(Land_area), " sq mi"
-)
-) |>
-pull(label_text) |>
-lapply(HTML)
-leaflet(density_map_sf) |>
-addTiles() |>
-setView(-96, 37.8, 4) |>
-addPolygons(
-fillColor = ~pal(Density),
-weight = 1,
-color = "black",
-opacity = 1,
-fillOpacity = 0.8,
-highlightOptions = highlightOptions(
-weight = 3,
-color = "#888",
-bringToFront = TRUE
-),
-label = labels,
-labelOptions = labelOptions(
-direction = "auto",
-textsize = "14px",
-style = list("font-weight" = "normal", padding = "3px 8px")
-)
-) |>
-addLegend(
-pal = pal,
-values = ~Density,
-opacity = 0.8,
-title = "Population density",
-position = "bottomright"
-)
-```
-
-
-2. The `states` dataset in the `poliscidata` package contains 135 variables on each of the 50 US states.  See [here](https://rdrr.io/cran/poliscidata/man/states.html) for more detail.
-
-Your task is to create a *two* meaningful choropleth plots, one using a numeric variable and one using a categorical variable from `poliscidata::states`.  You should make *two* versions of each plot: a static plot using the `maps` package and `ggplot()`, and an interactive plot using the `sf` package and `leaflet()`.  Write a sentence or two describing what you can learn from each plot.
-
-Here's some R code and hints to get you going:
+In this tab, I will create a *two* meaningful choropleth plots, one using a numeric variable and one using a categorical variable from `poliscidata::states`. You will see *two* versions of each plot: a static plot using the `maps` package and `ggplot()`, and an interactive plot using the `sf` package and `leaflet()`. Finally, I will write a sentence or two describing what I learn from each plot.
 
 ```{r}
 #| message: false
@@ -163,11 +65,10 @@ print(polisci_data)   # can see trailing spaces
 R code hints:
 
 - stringr functions like `str_squish` and `str_to_lower` and `str_replace_all` (be sure to carefully look at your keys!)
-- *_join functions (make sure they preserve classes)
+- \*\_join functions (make sure they preserve classes)
 - filter so that you only have 48 contiguous states (and maybe DC)
 - for help with colors: https://rstudio.github.io/leaflet/reference/colorNumeric.html
 - be sure labels pop up when scrolling with leaflet
-
 
 ```{r}
 # Make sure all keys have the same format before joining:
@@ -226,21 +127,27 @@ st_drop_geometry()|>
 count()
 ```
 
-
-Numeric variable (static plot):
+### Numeric variable (static plot):
 
 ```{r}
 ggplot(states_static, aes(x = long, y = lat, group = group)) +
-geom_polygon(aes(fill = carfatal07), color = "white", linewidth = 0.2) +
-coord_map() +
-theme_void() +
-scale_fill_viridis_c(na.value = "grey90") +
-labs(fill = "Car fatalities\n(2007)",
-title = "Motor vehicle fatality rates by state")
+  geom_polygon(aes(fill = carfatal07), color = "white", linewidth = 0.2) +
+  coord_map() +
+  theme_void() +
+  scale_fill_viridis_c(
+    option = "viridis",
+    na.value = "grey90",
+    name = "Fatalities\nper 100k"
+  ) +
+  labs(
+    title = "Motor Vehicle Fatality Rates by U.S. State (2007)",
+    caption = "Source: https://rdrr.io/cran/poliscidata/man/states.html"
+  )
 ```
 
+*Motor vehicle fatality rates vary significantly across states, with higher rates concentrated in the South and some Mountain West states. In contrast, states in the Northeast and on the West Coast tend to have lower fatality rates. This pattern may reflect differences in population density, road conditions, and driving behavior, as rural areas often experience higher speeds and longer emergency response times.*
 
-Numeric variable (interactive plot):
+### Numeric variable (interactive plot):
 
 ```{r}
 pal_num <- colorNumeric(
@@ -272,11 +179,18 @@ weight = 3,
 color = "#666",
 bringToFront = TRUE
 )
-)
+) |>
+  addLegend(
+    pal = pal_num,
+    values = ~carfatal07,
+    title = "Fatalities per 100,000",
+    position = "bottomright"
+  )
 ```
 
+*The interactive map reinforces the regional pattern observed in the static map, where southern and rural states tend to have higher motor vehicle fatality rates, while northeastern and coastal states show lower rates. By hovering over each state, we can see the exact values, which highlights how large the differences are across regions.The interactive feature allows users to hover over each state to view precise fatality rates, providing more detailed insight than the static map.*
 
-Categorical variable (static plot):
+#Categorical variable (static plot):
 
 ```{r}
 # be really careful with matching color order to factor level order
@@ -292,12 +206,14 @@ geom_polygon(aes(fill = cook_index3), color = "black", linewidth = 0.2) +
 coord_map() +
 theme_void() +
 scale_fill_brewer(palette = "RdBu", na.value = "grey90") +
-labs(fill = "Cook index",
-title = "State partisan leaning")
+  labs(
+    title = "State Partisan Leaning by U.S. State",
+    caption = "Source: https://rdrr.io/cran/poliscidata/man/states.html"
+  )
 ```
 
-
-Categorical variable (interactive plot):
+*This map shows which political party each state tends to support. The pattern shows that many coastal states lean Democratic, while many states in the South, Midwest, and Mountain West lean Republican.*
+### Categorical variable (interactive plot):
 
 ```{r}
 # may use colorFactor() here
@@ -342,4 +258,4 @@ position = "bottomright"
 )
 ```
 
-
+*This interactive map shows each state’s partisan leaning. By hovering over the states, users can see the exact category for each state, making it easier to compare regional political patterns across the country.*
